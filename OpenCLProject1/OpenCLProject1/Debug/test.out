@@ -1,0 +1,14 @@
+Using default instruction set architecture.
+Intel OpenCL Intel CPU device was found!
+Device name: Intel(R) Core(TM) i5-4258U CPU @ 2.40GHz
+Device version: OpenCL 1.2 (Build 76413)
+Device vendor: Intel(R) Corporation
+Device profile: FULL_PROFILE
+Compilation started
+Compilation done
+Linking started
+Linking done
+Kernel <float_kernel> was successfully vectorized
+Kernel <bitwise_kernel> was successfully vectorized
+Done.
+Build succeeded!

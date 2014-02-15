@@ -1,0 +1,30 @@
+﻿Build started 2/16/2014 2:40:44 AM.
+     1>Project "C:\Users\calvin\documents\visual studio 2012\Projects\OpenCLProject1\OpenCLProject1\OpenCLProject1.vcxproj" on node 2 (Build target(s)).
+     1>_Intel_OpenCL_Build_Rules:
+         Preprocessing: test.cl
+         cmd.exe /Q /C "C:\Users\calvin\AppData\Local\Temp\tmpb711f5e358ea491e8e2480723395da4c.cmd"
+         "C:\Program Files (x86)\Intel\OpenCL SDK\3.0\bin\x86\ioc32.exe" -cmd=build -input="C:\Users\calvin\documents\visual studio 2012\Projects\OpenCLProject1\OpenCLProject1\test.cl" -output="Debug\test.out" -VS -device=CPU -simd=default    -bo="           "
+         Using device: CPU
+         
+         Using default instruction set architecture.
+         Intel OpenCL Intel CPU device was found!
+         Device name: Intel(R) Core(TM) i5-4258U CPU @ 2.40GHz
+         Device version: OpenCL 1.2 (Build 76413)
+         Device vendor: Intel(R) Corporation
+         Device profile: FULL_PROFILE
+         Compilation started
+         Compilation done
+         Linking started
+         Linking done
+         Kernel <float_kernel> was successfully vectorized
+         Kernel <bitwise_kernel> was successfully vectorized
+         Done.
+         Build succeeded!
+         C:/Users/calvin/documents/visual studio 2012/Projects/OpenCLProject1/OpenCLProject1/Debug/test.out: Generated build log file (double click this line to view)
+       Link:
+         OpenCLProject1.vcxproj -> C:\Users\calvin\documents\visual studio 2012\Projects\OpenCLProject1\Debug\OpenCLProject1.exe
+     1>Done Building Project "C:\Users\calvin\documents\visual studio 2012\Projects\OpenCLProject1\OpenCLProject1\OpenCLProject1.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.52
