@@ -6,8 +6,6 @@
 /*																								*/
 /************************************************************************************************/
 
-
-
 #include "test.h"
 
 using namespace std;
@@ -25,10 +23,11 @@ int test::fillRandom(T *arrayPtr, const int width, const T rangeMin, const T ran
 		seed = (unsigned int)time(NULL);
 	}
 	srand(seed);
-	float range = float(rangeMax - rangeMin)+1.0;
+	float range = float(rangeMax - rangeMin)+1.00000f;
 	for(int j = 0; j < width; j++)
 	{
-		arrayPtr[j] = rangeMin + T(range*rand()/(RAND_MAX + 1.0));
+		arrayPtr[j] = rangeMin + T(range*rand()/(RAND_MAX + 1.00000f));
+		// cout << arrayPtr[j] << endl;
 	}
 
 	return CL_SUCCESS;
@@ -71,7 +70,7 @@ int test::initialize(){
 	deviceIDs = (cl_device_id*)alloca(sizeof(cl_device_id)*numDevices);
 	clGetDeviceIDs(platformIDs[0], CL_DEVICE_TYPE_ALL, numDevices, deviceIDs, NULL);
 
-	cout << "Inside for loop, Number of Devices: " << numDevices << " Platform #: " << platformIDs[0] << endl << endl;   // debug
+	cout << "Number of Devices: " << numDevices << " Platform #: " << platformIDs[0] << endl << endl;   // debug
 
 	if(numDevices > 0){
 		for(cl_uint j = 0; j < numDevices; j++){
@@ -123,18 +122,18 @@ int test::selectDevice(){
 	cout << endl;
 	cout << "Select a device: ";
 	cin >> myDevice;
-	// cout << "Device Selected: " << myDevice << endl;
-	start = clock();
+
 	errNum = clGetDeviceInfo(deviceIDs[myDevice], CL_DEVICE_TYPE, sizeof(cl_device_type), &myType, NULL);
 	checkErr(errNum, "clGetDeviceInfo: After device selection");
 
 	cout << "Using " << ((myType == CL_DEVICE_TYPE_CPU) ? "CPU" : "GPU") << endl;
 	cout << "Platform ID: " << platformIDs[0] << endl;
-	// system("pause");
+
 	errNum = clGetDeviceIDs(platformIDs[0], myType, numDevices, &deviceIDs[myDevice], NULL);
 	checkErr(errNum, "clGetDeviceIDs: After device selection");
-
+	start = clock();
 	createContext();
+	end = clock();
 	return CL_SUCCESS;
 }
 
@@ -155,7 +154,6 @@ int test::createContext(){
 
 	errNum = clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &size);
 	checkErr(errNum, "clGetContextInfo: createContext() - 1");
-	//devices = (cl_device_id*)alloca(sizeof(cl_device_id) * size);     // alternative
 	devices = new cl_device_id[size / sizeof(cl_device_id)];
 	errNum = clGetContextInfo(context, CL_CONTEXT_DEVICES, size, devices, NULL);
 	checkErr(errNum, "clGetContextInfo: createContext() - 2");
@@ -193,6 +191,7 @@ int test::setupCQ(){
 	checkErr(errNum, "clCreateCommandQueue: setupCQ()");
 	
 	runCLKernels();
+
 	return CL_SUCCESS;
 }
 
@@ -220,15 +219,27 @@ int test::runCLKernels(){
 	errNum = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
 	checkErr(errNum, "clBuildProgram: runCLKernels()");
 
-
 	kernel[0] = clCreateKernel(program, "float_kernel", NULL);
 	if(kernel[0] == NULL){
 		cerr << "Failed to create kernel" << endl;
 		return 1;
 	}
 
-	setupArray();
+	// setupArray
+	cl_uint size1 = length * sizeof(cl_float);
+	inputA = (cl_float*)alloca(size1);
+	inputB = (cl_float*)alloca(size1);
+	outputA = (cl_float*)alloca(size1);
 
+	fillRandom<cl_float>(inputA, length, 0, 20000.00000f, 1);
+	fillRandom<cl_float>(inputB, length , 0, 20000.00000f, 2);
+
+	/*   debug
+	for(int i = 0; i < length; i++){
+		cout <<"inputA: " << inputA[i] << endl;
+	}
+	*/
+	//end of setup Array
 
 	inputABuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 									sizeof(cl_float) * length, inputA, NULL);
@@ -254,7 +265,7 @@ int test::runCLKernels(){
 		return 1;
 	}
 
-	size_t globalWorkSize[1] = {GROUP_SIZE};
+	size_t globalWorkSize[1] = {length};
 	size_t localWorkSize[1] = {1};
 
 	errNum = clEnqueueNDRangeKernel(commandQueue, kernel[0], 1, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
@@ -271,29 +282,18 @@ int test::runCLKernels(){
 		return 1;
 	}
 
-/*  
-	// print result
+
+	//end = clock();
+
+
+	/*
+	// print result (debug)
+	// print after clock has stopped
 	for(int i = 0; i < length; i++){
-		cout << output[i] << endl;
+		cout.precision(10);
+		cout << "Pythagoras's Theorem - " << i << ": " << inputA[i] << " and " << inputB[i] << ": "<< outputA[i] << endl;
 	}
-*/
-	end = clock();
-	cout << endl << endl;
-	cout << "Runtime: " << ((double)(end-start)/1000) << "s" << endl;
-	return CL_SUCCESS;
-}
-
-// Fill two arrays with random float range from 0-20000
-int test::setupArray(){
-	// set up for kernel 0
-	cl_uint size1 = length * sizeof(cl_float);
-	inputA = (cl_float*)alloca(size1);
-	inputB = (cl_float*)alloca(size1);
-	outputA = (cl_float*)alloca(size1);
-
-	fillRandom<cl_float>(inputA, length, 0, 30000, 10);
-	fillRandom<cl_float>(inputB, length , 0, 30000, 20);
-	
+	*/
 	return CL_SUCCESS;
 }
 
@@ -302,6 +302,8 @@ int test::setupArray(){
 int main(int argc, char ** argv){
 	test CLTest;
 	CLTest.initialize();
+	cout << endl << endl;
+	cout << "Runtime: " << ((double)(CLTest.end-CLTest.start)/1000) << "s" << endl;
 	system("pause");
 
 }

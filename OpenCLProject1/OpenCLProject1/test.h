@@ -1,5 +1,6 @@
 #define NUM_KERNELS 2
 #define GROUP_SIZE 256
+#define ITERATION 100
 
 #ifndef TEST_H
 #define TEST_H
@@ -32,9 +33,6 @@ public:
 	cl_float *inputB;
 	cl_float *outputA;
 
-
-
-
 	cl_uint numPlatforms;
 	cl_uint numDevices;
 	cl_device_id *deviceIDs;
@@ -55,19 +53,7 @@ public:
 
 	cl_program program;
 	cl_kernel kernel[NUM_KERNELS];
-	size_t globalThreads[2];
-	size_t localThreads[2];
 
-	/*
-	size_t maxWorkGroupSize;
-	size_t kernelWorkGroupSize;
-	cl_uint maxDimensions;
-	size_t * maxWorkItemSizes;
-	cl_ulong totalLocalMemory;
-	cl_ulong usedLocalMemory;
-	cl_ulong availableLocalMemory;
-	cl_ulong neededLocalMemory;
-	*/
 	test(){
 		inputA = NULL;
 		inputB = NULL;
@@ -85,7 +71,7 @@ public:
 
 	int runCLKernels();
 
-	int setupArray();
+	int cleanup();
 
 	inline void checkErr(cl_int, const char *);
 

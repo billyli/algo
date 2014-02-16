@@ -9,6 +9,5 @@ Compilation done
 Linking started
 Linking done
 Kernel <float_kernel> was successfully vectorized
-Kernel <bitwise_kernel> was successfully vectorized
 Done.
 Build succeeded!
